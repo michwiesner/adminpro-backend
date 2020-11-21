@@ -3,11 +3,17 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 const { generateJWT } = require('../helpers/jwt');
 
-const getUsers = async(req, res) => {
+const getUsers = async(req, res = response) => {
+    const desde = Number(req.query.desde) || 0;
 
-    const users = await User.find({}, 'nombre email role google');
+    const [users, total] = await Promise.all([
+        User.find({}, 'name email role google').skip(desde).limit(5),
+        User.count()
+    ]);
+
     res.json({
         ok: true,
+        total,
         users
     });
 }
@@ -21,7 +27,7 @@ const postUser = async(req, res = response) => {
         if (emailExists) {
             return res.status(400).json({
                 ok: false,
-                msg: 'An error has happen'
+                msg: 'An error has happeneded'
             });
         }
         const user = new User(req.body);
@@ -41,7 +47,7 @@ const postUser = async(req, res = response) => {
         console.error(error);
         res.status(500).json({
             ok: false,
-            msg: 'Error inesperado'
+            msg: 'Error unespected'
         });
     }
 
@@ -84,7 +90,7 @@ const updateUser = async(req, res = response) => {
         console.error(error);
         res.status(500).json({
             ok: false,
-            msg: 'Something bad happen'
+            msg: 'Something bad happened'
         });
     }
 }
