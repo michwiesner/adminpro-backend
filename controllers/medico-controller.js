@@ -34,17 +34,62 @@ const postMedico = async(req, res = response) => {
 };
 
 const updateMedico = async(req, res = response) => {
-    res.status(200).json({
-        ok: true,
-        msg: 'Todo ok'
-    })
+    const id = req.params.id;
+
+    try {
+        const medicoDB = await Medico.findById(id);
+
+        if (!medicoDB) {
+            return res.status(404).json({
+                ok: false,
+                msg: 'Medico not found'
+            });
+        }
+
+        const updatedMedico = {
+            ...req.body,
+            user: req.id
+        }
+        await Medico.findByIdAndUpdate(id, updatedMedico, { new: true });
+        res.status(200).json({
+            ok: true,
+            msg: 'All updated',
+            medico: updatedMedico
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            ok: false,
+            msg: 'Wrong information'
+        });
+    }
 };
 
 const deleteMedico = async(req, res = response) => {
-    res.status(200).json({
-        ok: true,
-        msg: 'Todo ok'
-    })
+    const id = req.params.id;
+
+    try {
+        const medicoDB = await Medico.findById(id);
+        if (!medicoDB) {
+            return res.status(404).json({
+                ok: false,
+                msg: 'Medico not found'
+            });
+        }
+
+        await Medico.findByIdAndDelete(id);
+        return res.status(200).json({
+            ok: true,
+            msg: 'Deleted succesfull'
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error deleting, check with admin'
+        });
+
+    }
 };
 
 module.exports = {

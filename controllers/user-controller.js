@@ -110,11 +110,11 @@ const deleteUser = async(req, res = response) => {
         await User.findByIdAndDelete(id);
         return res.status(200).json({
             ok: true,
-            msg: 'Deleting succesful'
+            msg: 'Deleted succesfull'
         });
 
     } catch (error) {
-        return res.status(200).json({
+        return res.status(500).json({
             ok: false,
             msg: 'Error deleting, check with admin'
         });
